@@ -16,7 +16,6 @@ interface RegisterTokenRequestBody {
 const authorization = (appKey: string, bundleID: string) => `Basic ${btoa(`${appKey}:${bundleID}`)}`
 
 const getOrNewUUID = () => {
-
     const key = 'b_uuid'
     let uuid = localStorage.getItem(key)
     if (!uuid) {
@@ -33,7 +32,52 @@ const abortTimeout = (ms: number) => {
     return { id, signal }
 }
 
-const registerTokenBody: (props: { pushToken: string, bundleID: string }) => RegisterTokenRequestBody = ({ pushToken, bundleID }) => {
+const osInfo = () => {
+    const { userAgent } = navigator
+    const os = userAgent.match(/\(([^)]+)\)/)
+
+    let deviceBrand: string = ''
+    let deviceModel: string = ''
+
+    if (os) {
+        const line = os[1]
+        const words = line.split(' ')
+
+        const iPhoneIndex = words.findIndex((e) => e === 'iPhone')
+        if (iPhoneIndex > -1) {
+            deviceBrand = 'iPhone'
+            const osIndex = words.findIndex((e) => e === 'OS')
+            deviceModel = words.at(osIndex + 1) || ''
+            return { deviceBrand, deviceModel }
+        }
+
+        const macIndex = words.findIndex((e) => e === 'Mac')
+        if (macIndex > -1) {
+            deviceBrand = 'Mac'
+            deviceModel = words.at(-1) || ''
+            return { deviceBrand, deviceModel }
+        }
+
+        const androidIndex = words.findIndex((e) => e === 'Android')
+        if (androidIndex > -1) {
+            deviceBrand = 'Android'
+            deviceModel = words.at(androidIndex + 1) || ''
+            return { deviceBrand, deviceModel }
+        }
+
+        const windowIndex = words.findIndex((e) => e === 'Windows')
+        if (androidIndex > -1) {
+            deviceBrand = 'Windows'
+            deviceModel = words.at(windowIndex + 2) || ''
+            return { deviceBrand, deviceModel }
+        }
+    }
+
+    return { deviceBrand, deviceModel }
+}
+
+const registerTokenBody: (props: { pushToken: string, bundleID: string, appVersion: string }) => RegisterTokenRequestBody = ({ pushToken, bundleID, appVersion = '' }) => {
+    const { deviceBrand, deviceModel } = osInfo()
 
     return {
         deviceID: getOrNewUUID(),
@@ -42,17 +86,17 @@ const registerTokenBody: (props: { pushToken: string, bundleID: string }) => Reg
         env: 'product',
         bundleID,
         version: '1.0.0',
-        appVersion: '1.0.0',
-        deviceBrand: navigator.platform,
-        deviceModel: navigator.appCodeName,
-        osVersion: '1.0.0',
+        appVersion,
+        deviceBrand,
+        deviceModel,
+        osVersion: ''
     }
 }
 
-const registerToken = async (pushToken: string, appKey: string, bundleID: string) => {
+const registerToken = async (pushToken: string, appKey: string, bundleID: string, appVersion: string) => {
     const domainURL: string = 'http://10.150.210.142:8080' //暫時
     const path: string = '/api/v1/sdk/registerToken'
-    const body = registerTokenBody({ pushToken, bundleID })
+    const body = registerTokenBody({ pushToken, bundleID, appVersion })
     const { id, signal } = abortTimeout(10)
 
     const request = new Request(`${domainURL}${path}`, {
@@ -74,5 +118,5 @@ const registerToken = async (pushToken: string, appKey: string, bundleID: string
 }
 
 export const BPush = {
-    registerToken: (pushToken: string, appKey: string, bundleID: string) => registerToken(pushToken, appKey, bundleID)
+    registerToken: (props: { pushToken: string, appKey: string, bundleID: string, appVersion?: string }) => registerToken(props.pushToken, props.appKey, props.bundleID, props.appVersion || '')
 }

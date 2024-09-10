@@ -1,3 +1,8 @@
 export declare const BPush: {
-    registerToken: (pushToken: string, appKey: string, bundleID: string) => Promise<Response>;
+    registerToken: (props: {
+        pushToken: string;
+        appKey: string;
+        bundleID: string;
+        appVersion?: string;
+    }) => Promise<Response>;
 };

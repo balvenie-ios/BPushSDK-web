@@ -108,7 +108,7 @@ export default function Home() {
     useEffect(() => {
         const register = async () => {
           if (token != null) {
-            const response = await BPush.registerToken(token, appKey, bundleID)
+            const response = await BPush.registerToken({ pushToken: token, appKey, bundleID, appVersion: '1.0.0' })
             console.log(response)
           }
         }
