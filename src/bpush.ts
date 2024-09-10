@@ -50,7 +50,7 @@ const registerTokenBody: (props: { pushToken: string, bundleID: string }) => Reg
 }
 
 const registerToken = async (pushToken: string, appKey: string, bundleID: string) => {
-    const domainURL: string = 'http://10.150.210.156:8080' //暫時
+    const domainURL: string = 'http://10.150.210.142:8080' //暫時
     const path: string = '/api/v1/sdk/registerToken'
     const body = registerTokenBody({ pushToken, bundleID })
     const { id, signal } = abortTimeout(10)
@@ -73,6 +73,6 @@ const registerToken = async (pushToken: string, appKey: string, bundleID: string
     }
 }
 
-export const API = {
+export const BPush = {
     registerToken: (pushToken: string, appKey: string, bundleID: string) => registerToken(pushToken, appKey, bundleID)
 }
