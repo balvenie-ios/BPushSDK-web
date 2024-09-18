@@ -27,7 +27,44 @@ const abortTimeout = (ms) => {
     const id = setTimeout(() => signal, ms);
     return { id, signal };
 };
-const registerTokenBody = ({ pushToken, bundleID }) => {
+const osInfo = () => {
+    const { userAgent } = navigator;
+    const os = userAgent.match(/\(([^)]+)\)/);
+    let deviceBrand = '';
+    let deviceModel = '';
+    if (os) {
+        const line = os[1];
+        const words = line.split(' ');
+        const iPhoneIndex = words.findIndex((e) => e === 'iPhone');
+        if (iPhoneIndex > -1) {
+            deviceBrand = 'iPhone';
+            const osIndex = words.findIndex((e) => e === 'OS');
+            deviceModel = words.at(osIndex + 1) || '';
+            return { deviceBrand, deviceModel };
+        }
+        const macIndex = words.findIndex((e) => e === 'Mac');
+        if (macIndex > -1) {
+            deviceBrand = 'Mac';
+            deviceModel = words.at(-1) || '';
+            return { deviceBrand, deviceModel };
+        }
+        const androidIndex = words.findIndex((e) => e === 'Android');
+        if (androidIndex > -1) {
+            deviceBrand = 'Android';
+            deviceModel = words.at(androidIndex + 1) || '';
+            return { deviceBrand, deviceModel };
+        }
+        const windowIndex = words.findIndex((e) => e === 'Windows');
+        if (androidIndex > -1) {
+            deviceBrand = 'Windows';
+            deviceModel = words.at(windowIndex + 2) || '';
+            return { deviceBrand, deviceModel };
+        }
+    }
+    return { deviceBrand, deviceModel };
+};
+const registerTokenBody = ({ pushToken, bundleID, appVersion = '' }) => {
+    const { deviceBrand, deviceModel } = osInfo();
     return {
         deviceID: getOrNewUUID(),
         platform: 'web',
@@ -35,16 +72,17 @@ const registerTokenBody = ({ pushToken, bundleID }) => {
         env: 'product',
         bundleID,
         version: '1.0.0',
-        appVersion: '1.0.0',
-        deviceBrand: navigator.platform,
-        deviceModel: navigator.appCodeName,
-        osVersion: '1.0.0',
+        appVersion,
+        deviceBrand,
+        deviceModel,
+        osVersion: ''
     };
 };
-const registerToken = (pushToken, appKey, bundleID) => __awaiter(void 0, void 0, void 0, function* () {
+const registerToken = (pushToken, appKey, bundleID, appVersion) => __awaiter(void 0, void 0, void 0, function* () {
     const domainURL = 'http://10.150.210.142:8080'; //暫時
     const path = '/api/v1/sdk/registerToken';
-    const body = registerTokenBody({ pushToken, bundleID });
+    const body = registerTokenBody({ pushToken, bundleID, appVersion });
+    console.log('registerToken body', body);
     const { id, signal } = abortTimeout(10);
     const request = new Request(`${domainURL}${path}`, {
         method: 'POST',
@@ -64,5 +102,5 @@ const registerToken = (pushToken, appKey, bundleID) => __awaiter(void 0, void 0,
     }
 });
 exports.BPush = {
-    registerToken: (pushToken, appKey, bundleID) => registerToken(pushToken, appKey, bundleID)
+    registerToken: (props) => registerToken(props.pushToken, props.appKey, props.bundleID, props.appVersion || '')
 };
