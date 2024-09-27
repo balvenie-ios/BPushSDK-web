@@ -1,7 +1,7 @@
 {
   "name": "@bpush/bpushsdk-web",
   "version": "1.0.0",
-  "description": "",
+  "description": "BPush SDK for Web",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -16,6 +16,15 @@
     "@types/uuid": "^10.0.0",
     "typescript": "^5.5.4"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Balvenie-ios",
+  "license": "ISC",
+  "homepage": "https://github.com/balvenie-ios/BPushSDK-web#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/balvenie-ios/BPushSDK-web"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
