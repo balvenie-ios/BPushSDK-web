@@ -2,7 +2,7 @@
 
 ### Installation
 ```
-$ npm i git@gitlab.baifu-tech.net:ios/BPush/bpushsdk-web.git
+$ npm i @bpush/bpushsdk-web
 ```
 
 ### Usage
