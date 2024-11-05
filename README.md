@@ -1,19 +1,22 @@
 # BPushSDK-web
 
 ### Installation
+
 ```
-$ npm i git@gitlab.baifu-tech.net:ios/BPush/bpushsdk-web.git
+$ npm i @bpush/bpushsdk-web
 ```
 
 ### Usage
 
 須先安裝 `firebase` package
+
 ```
 $ npm install firebase
 ```
 
 新增 firebase service worker `firebase-messaging-sw.js`, 在專案 root 路徑下 : 
 如果是使用 `Next.js` 則放在 `public` 下面
+
 ```js
 importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js');
@@ -27,24 +30,10 @@ firebase.initializeApp({
     appId: "1:42574203204:web:c83c58f18f6fbf049def11",
     measurementId: "G-SJL4LTKDDM"
 });
-
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage((payload) => {
-    console.log(
-        "[firebase-messaging-sw.js] Received background message ",
-        payload
-    );
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: "./logo.png",
-    };
-    self.registration.showNotification(notificationTitle, notificationOptions);
-});
 ```
 
 初始化 firebase 
+
 ```ts
 import { initializeApp } from "firebase/app";
 import { getMessaging } from "firebase/messaging";
@@ -64,6 +53,7 @@ export const messaging = getMessaging(firebaseApp)
 ```
 
 向 firebase 取得 push token, react hook 寫法
+
 ```ts
 export const useFCMToken = () => {
     const [token, setToken] = useState<string | null>(null)
@@ -79,6 +69,7 @@ export const useFCMToken = () => {
 ```
 
 拿到 push token後, 監聽推播訊息, react hook 寫法
+
 ```ts
 export const useFCMMessage = () => {
     const token = useFCMToken()
@@ -98,6 +89,7 @@ export const useFCMMessage = () => {
 ```
 
 在頁面中使用, 向 firebase 註冊 push token, 回傳給 BPush 並監聽 message 內容:
+
 ```ts
 export default function Home() {
     const appKey = 'dd436241299741a00dfd692de82b85b9'
@@ -128,3 +120,23 @@ export default function Home() {
     )
 }
 ```
+
+## 版本發佈
+
+***發佈至 npm***
+
+- 確認要發佈的版本號 package.json 內的 version
+- 帳號：ios@baifu-tech.net
+- 終端機登入
+
+```
+npm login
+```
+- 發佈版本
+
+```
+npm publish
+```
+- 到 [npmjs](https://www.npmjs.com/)  上確認發佈的版本是否正確
+	
+	
