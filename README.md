@@ -30,21 +30,6 @@ firebase.initializeApp({
     appId: "1:42574203204:web:c83c58f18f6fbf049def11",
     measurementId: "G-SJL4LTKDDM"
 });
-
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage((payload) => {
-    console.log(
-        "[firebase-messaging-sw.js] Received background message ",
-        payload
-    );
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: "./logo.png",
-    };
-    self.registration.showNotification(notificationTitle, notificationOptions);
-});
 ```
 
 初始化 firebase 
