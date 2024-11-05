@@ -94,7 +94,7 @@ const registerTokenBody: (props: { pushToken: string, bundleID: string, appVersi
 }
 
 const registerToken = async (pushToken: string, appKey: string, bundleID: string, appVersion: string) => {
-    const domainURL: string = 'https://bpushdev-api.zzishare.com' //暫時
+    const domainURL: string = 'https://bpush-api.zzishare.com'
     const path: string = '/api/v1/sdk/registerToken'
     const body = registerTokenBody({ pushToken, bundleID, appVersion })
     const { id, signal } = abortTimeout(10)
